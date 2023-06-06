@@ -1,7 +1,41 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable prettier/prettier */
 import { View, Text, StyleSheet, FlatList, Image, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+
+interface Meal {
+  name: string;
+  image: any;
+}
+interface Category {
+  name: string;
+  meals: Meal[];
+}
+
+const categories: Category[] = [
+  {
+    name: 'Breakfast',
+    meals: [
+      { name: 'Eggs Benedict', image: require('./assets/category1.png') },
+      { name: 'Pancakes', image: require('./assets/category2.png') },
+    ],
+  },
+  {
+    name: 'Lunch',
+    meals: [
+      { name: 'Chicken Caesar Salad', image: require('./assets/category3.png') },
+      { name: 'Club Sandwich', image: require('./assets/category1.png') },
+    ],
+  },
+  {
+    name: 'Dinner',
+    meals: [
+      { name: 'Spaghetti Bolognese', image: require('./assets/category2.png') },
+      { name: 'Pizza', image: require('./assets/category3.png') },
+    ],
+  },
+];
+
 const data = [
   {
     id: 1,
@@ -36,9 +70,19 @@ interface Item {
   rate: number;
 }
 
-
 const Home = () => {
   const [savedItems, setSavedItems] = useState(data.map(() => false));
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      setSelectedCategory(categories[0]);
+    }
+  }, []);
+
+  const handleCategoryPress = (category: Category) => {
+    setSelectedCategory(category);
+  };
 
   const handleSaveImage = (item: Item) => {
     setSavedItems((prevSavedItems) => {
@@ -49,6 +93,18 @@ const Home = () => {
     console.log('Image saved:', item.title);
   };
 
+  const renderMealItem = ({ item }: { item: Meal }) => (
+    <TouchableOpacity >
+      <Image source={item.image} style={{ width: 100, height: 100 }} />
+      <Text>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
+  const renderCategoryButton = ({ item }: { item: Category }) => (
+    <TouchableOpacity onPress={() => handleCategoryPress(item)}>
+      <Text>{item.name}</Text>
+    </TouchableOpacity>
+  );
   const renderItem = ({ item }: { item: Item }) => {
     const isSaved = savedItems[item.id - 1];
     return (
@@ -86,10 +142,28 @@ const Home = () => {
         horizontal={true}
         showsHorizontalScrollIndicator={false}
       />
+      <View style={styles.popular}>
+        <Text style={styles.popularTitle}>Popular category</Text>
+        <FlatList
+          data={categories}
+          renderItem={renderCategoryButton}
+          keyExtractor={(item: { name: string; }) => item.name}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        />
+        {selectedCategory && (
+          <FlatList
+            data={selectedCategory.meals}
+            renderItem={renderMealItem}
+            keyExtractor={(meal) => meal.name}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -165,6 +239,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#E23E3E',
     tintColor: '#fff',
     borderRadius: 50,
+  },
+  popular: {
+    paddingVertical: 20,
+  },
+  popularTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
 
