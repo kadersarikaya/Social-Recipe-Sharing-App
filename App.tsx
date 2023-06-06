@@ -5,6 +5,7 @@ import Home from './src/Home';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import BottomTab from './src/components/BottomTab';
+import StartPage from './src/StartPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +13,13 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="StartPage"
+          component={StartPage}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen
           name="BottomTab"
           component={BottomTab}

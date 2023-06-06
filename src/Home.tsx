@@ -1,8 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable prettier/prettier */
-import { View, Text, FlatList, Image, TextInput, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, FlatList, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import styles from './styles/HomeStyles'
+import styles from './styles/HomeStyles';
 
 interface Meal {
   name: string;
