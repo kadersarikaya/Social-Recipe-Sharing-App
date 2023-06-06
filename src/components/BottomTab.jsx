@@ -18,8 +18,7 @@ const CustomTabBarButton = ({ children, onPress }) => (
             alignItems: 'center',
             ...styles.shadow,
         }}
-        onPress={onPress}
-    >
+        onPress={onPress}>
         <View
             style={{
                 width: 70,
@@ -45,6 +44,8 @@ const BottomTab = () => {
                     left: 20,
                     elevation: 0,
                     right: 20,
+                    elevation: 0,
+                    backgroundColor: '#fff',
                     borderRadius: 15,
                     height: 90,
                     ...styles.shadow,
@@ -57,10 +58,13 @@ const BottomTab = () => {
                     headerShown: false,
                     showLabel: false,
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }} >
+                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 0 }} >
                             <Image
                                 source={require('../assets/Home.png')}
                                 resizeMode="contain"
+                                style={{
+                                    tintColor: focused ? '#e23e3e' : '#748c94',
+                                }}
                             />
                         </View>
                     ),
@@ -71,10 +75,15 @@ const BottomTab = () => {
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }} >
+                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 0 }} >
                             <Image
                                 source={require('../assets/Search.png')}
                                 resizeMode="contain"
+                                style={{
+                                    width: 27,
+                                    height: 27,
+                                    tintColor: focused ? '#e23e3e' : '#748c94',
+                                }}
                             />
                         </View>
                     ),
@@ -84,7 +93,7 @@ const BottomTab = () => {
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 0 }}>
                             <Image
                                 source={require('../assets/Add.png')}
                                 resizeMode="contain"
@@ -100,10 +109,13 @@ const BottomTab = () => {
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }} >
+                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 0 }} >
                             <Image
                                 source={require('../assets/Saved.png')}
                                 resizeMode="contain"
+                                style={{
+                                    tintColor: focused ? '#e23e3e' : '#748c94',
+                                }}
                             />
                         </View>
                     ),
@@ -113,10 +125,13 @@ const BottomTab = () => {
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => (
-                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }} >
+                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 0 }} >
                             <Image
                                 source={require('../assets/Profile.png')}
                                 resizeMode="contain"
+                                style={{
+                                    tintColor: focused ? '#e23e3e' : '#748c94',
+                                }}
                             />
                         </View>
                     ),
