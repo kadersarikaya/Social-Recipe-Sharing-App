@@ -2,11 +2,11 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from '../Home';
-import Profile from '../Profile';
-import Saved from '../Saved';
-import Discover from '../Discover';
-import CreatePost from '../CreatePost';
+import Home from '../pages/Home';
+import Profile from '../pages/Profile';
+import Saved from '../pages/Saved';
+import Discover from '../pages/Discover';
+import CreatePost from '../pages/CreatePost';
 
 const Tab = createBottomTabNavigator();
 

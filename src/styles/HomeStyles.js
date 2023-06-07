@@ -53,14 +53,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16, marginTop: 12,
   },
-  saveButton: {
-    position: 'absolute',
-    zIndex: 1,
-    right: 10,
-    top: 10,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
   Flatlist: {
     marginTop: 16,
     display: 'flex',

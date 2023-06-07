@@ -1,8 +1,12 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable prettier/prettier */
 import { View, Text, FlatList, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import styles from './styles/HomeStyles';
+import React, { useState, useEffect, useContext } from 'react';
+import styles from '../styles/HomeStyles';
+import {SavedRecipesContext} from '../components/context/saveContext';
+import Bookmark from '../components/Bookmark';
+import {useNavigation} from '@react-navigation/native';
+
 
 interface Meal {
   name: string;
@@ -17,43 +21,43 @@ const categories: Category[] = [
   {
     name: 'Breakfast',
     meals: [
-      { name: 'Eggs Benedict', image: require('./assets/category1.png') },
-      { name: 'Pancakes', image: require('./assets/video.png') },
+      { name: 'Eggs Benedict', image: require('../assets/category1.png') },
+      { name: 'Pancakes', image: require('../assets/video.png') },
     ],
   },
   {
     name: 'Lunch',
     meals: [
-      { name: 'Chicken Caesar Salad', image: require('./assets/video1.png') },
-      { name: 'Club Sandwich', image: require('./assets/category1.png') },
+      { name: 'Chicken Caesar Salad', image: require('../assets/video1.png') },
+      { name: 'Club Sandwich', image: require('../assets/category1.png') },
     ],
   },
   {
     name: 'Dinner',
     meals: [
-      { name: 'Spaghetti Bolognese', image: require('./assets/video2.png') },
-      { name: 'Pizza', image: require('./assets/video1.png') },
+      { name: 'Spaghetti Bolognese', image: require('../assets/video2.png') },
+      { name: 'Pizza', image: require('../assets/video1.png') },
     ],
   },
   {
     name: 'Dessert',
     meals: [
-      { name: 'Cheesecake', image: require('./assets/video.png') },
-      { name: 'Ice Cream Sundae', image: require('./assets/video1.png') },
+      { name: 'Cheesecake', image: require('../assets/video.png') },
+      { name: 'Ice Cream Sundae', image: require('../assets/video1.png') },
     ],
   },
   {
     name: 'Drinks',
     meals: [
-      { name: 'Mojito', image: require('./assets/video.png') },
-      { name: 'Strawberry Daiquiri', image: require('./assets/category1.png') },
+      { name: 'Mojito', image: require('../assets/video.png') },
+      { name: 'Strawberry Daiquiri', image: require('../assets/category1.png') },
     ],
   },
   {
     name: 'Coffee',
     meals: [
-      { name: 'Cappuccino', image: require('./assets/video.png') },
-      { name: 'Latte', image: require('./assets/video1.png') },
+      { name: 'Cappuccino', image: require('../assets/video.png') },
+      { name: 'Latte', image: require('../assets/video1.png') },
     ],
   },
 ];
@@ -61,25 +65,25 @@ const categories: Category[] = [
 const data = [
   {
     id: 1,
-    image: require('./assets/video.png'),
+    image: require('../assets/video.png'),
     title: 'Spicy seasoned seafood noodles',
     rate: 92,
   },
   {
     id: 2,
-    image: require('./assets/video1.png'),
+    image: require('../assets/video1.png'),
     title: 'Salted Pasta with mushroom sauce',
     rate: 97,
   },
   {
     id: 3,
-    image: require('./assets/video2.png'),
+    image: require('../assets/video2.png'),
     title: 'Beef dumpling in hot and sour soup',
     rate: 95,
   },
   {
     id: 4,
-    image: require('./assets/video.png'),
+    image: require('../assets/video.png'),
     title: 'Healthy noodle with spinach leaf',
     rate: 95,
   },
@@ -93,9 +97,10 @@ interface Item {
 }
 
 const Home = () => {
-  const [savedItems, setSavedItems] = useState(data.map(() => false));
+  const {savedRecipes, saveRecipe, unsaveRecipe} = useContext(SavedRecipesContext);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
+  const navigation: any = useNavigation();
 
   useEffect(() => {
     if (categories.length > 0) {
@@ -109,12 +114,11 @@ const Home = () => {
   };
 
   const handleSaveImage = (item: Item) => {
-    setSavedItems((prevSavedItems) => {
-      const newSavedItems = [...prevSavedItems];
-      newSavedItems[item.id - 1] = !newSavedItems[item.id - 1];
-      return newSavedItems;
-    });
-    console.log('Image saved:', item.title);
+    if (savedRecipes.some((recipe: { id: number; }) => recipe.id === item.id)) {
+      unsaveRecipe(item);
+    } else {
+      saveRecipe(item);
+    }
   };
 
   const renderMealItem = ({ item }: { item: Meal }) => (
@@ -141,12 +145,15 @@ const Home = () => {
     </TouchableOpacity>
   );
   const renderItem = ({ item }: { item: Item }) => {
-    const isSaved = savedItems[item.id - 1];
+    const isSaved = savedRecipes.some((recipe: { id: number; }) => recipe.id === item.id);
     return (
       <View style={styles.Flatlist} >
-        <TouchableOpacity style={styles.saveButton} onPress={() => handleSaveImage(item)}>
-          <Image style={isSaved ? styles.savedImage : styles.saveImage} source={require('./assets/Saved.png')} />
-        </TouchableOpacity>
+        <Bookmark isSaved={isSaved}
+          onPress={() => handleSaveImage(item)}
+          imageSource={require('../assets/Saved.png')}
+          savedImageStyle={styles.savedImage}
+          imageStyle={styles.saveImage}
+        />
         <Image source={item.image}
           style={styles.image}
         />
@@ -164,10 +171,12 @@ const Home = () => {
         </View>
         <View style={styles.trend} >
           <Text style={styles.trendTitle} >Trending now 🔥</Text>
-          <TouchableOpacity style={styles.trendBtn} >
+          <TouchableOpacity onPress={
+            () => navigation.navigate('Discover')
+          } style={styles.trendBtn} >
             <Text style={styles.trendCTA} >See all</Text>
             <Image
-              source={require('./assets/ArrowRight.png')}
+              source={require('../assets/ArrowRight.png')}
             />
           </TouchableOpacity>
         </View>
@@ -201,7 +210,5 @@ const Home = () => {
     </ScrollView>
   );
 };
-
-
 
 export default Home;

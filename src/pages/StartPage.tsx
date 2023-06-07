@@ -1,25 +1,25 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
-import {View, ImageBackground, Text, StyleSheet, TouchableOpacity} from "react-native";
-import {useNavigation} from '@react-navigation/native';
+import { View, ImageBackground, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 
 const StartPage = () => {
-    const navigation:any = useNavigation();
+    const navigation: any = useNavigation();
 
     const handleStartCooking = () => {
-        navigation.navigate('Home'); // Ana sayfaya yönlendirme
+        navigation.navigate('BottomTab'); // Ana sayfaya yönlendirme
     };
-  return (
-      <ImageBackground source={require('./assets/bgImage.png')} style={styles.backgroundImage}>
-          <View style={styles.container}>
-              <Text style={styles.title}>Let’s Cooking</Text>
-              <Text style={styles.slogan} >Find best recipes for cooking</Text>
-              <TouchableOpacity style={styles.button} onPress={handleStartCooking}>
-                  <Text style={styles.buttonText}>Start cooking</Text>
-              </TouchableOpacity>
-          </View>
-      </ImageBackground>
-  );
+    return (
+        <ImageBackground source={require('../assets/bgImage.png')} style={styles.backgroundImage}>
+            <View style={styles.container}>
+                <Text style={styles.title}>Let’s Cooking</Text>
+                <Text style={styles.slogan} >Find best recipes for cooking</Text>
+                <TouchableOpacity style={styles.button} onPress={handleStartCooking}>
+                    <Text style={styles.buttonText}>Start cooking</Text>
+                </TouchableOpacity>
+            </View>
+        </ImageBackground>
+    );
 };
 
 const styles = StyleSheet.create({
