@@ -17,7 +17,7 @@ const recipes: Recipe[] = [
     { id: 2, title: 'Tarif 2', image: require('../assets/video.png') },
 ];
 
-const Profile: React.FC = () => {
+const ProfileScreen: React.FC = () => {
     const renderRecipeItem: React.FC<{ item: Recipe }> = ({ item }) => (
         <View style={styles.recipeItem}>
             <Image source={item.image} style={styles.recipeImage} />
@@ -27,12 +27,18 @@ const Profile: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton}>
+                <Text style={styles.backButtonText}>{'< Back'}</Text>
+            </TouchableOpacity>
             <View style={styles.profileInfo}>
                 <Image source={require('../assets/profilepic.jpg')} style={styles.profilePicture} />
-                <View style={styles.nameInfo} >
+                <View>
                     <Text style={styles.name}>Adınız</Text>
                     <Text style={styles.username}>@kullanici_adi</Text>
                 </View>
+                <TouchableOpacity style={styles.followButton}>
+                    <Text style={styles.followButtonText}>Follow</Text>
+                </TouchableOpacity>
             </View>
             <View style={styles.statsContainer}>
                 <View style={styles.statsItem}>
@@ -78,9 +84,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         display: 'flex',
         alignItems: 'center',
-    },
-    nameInfo: {
-        marginLeft: 20,
+        justifyContent: 'space-between',
     },
     profilePicture: {
         width: 80,
@@ -158,4 +162,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Profile;
+export default ProfileScreen;
