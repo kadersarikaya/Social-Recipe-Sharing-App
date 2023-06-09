@@ -1,81 +1,386 @@
 /* eslint-disable prettier/prettier */
-import {View, Text, FlatList, Image, StyleSheet} from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
-
+import {useNavigation} from '@react-navigation/native';
+interface Recipe {
+  id: string;
+  image: any;
+  title: string;
+  author: {
+    name: string;
+    avatar: string;
+  };
+  cookTime: string;
+  serving: string;
+  ingredients: string[];
+  instructions: string[];
+  comments: {
+    author: {
+      name: string;
+      avatar: string;
+    };
+    text: string;
+  }[];
+}
 const Discover = () => {
-  const DATA = [
+  const navigation: any = useNavigation();
+  const DATA: Recipe[] = [
     {
       id: '1',
-      title: 'Vegetable & Fruit Salad with Indian Spices',
+      title: 'Vegetable & Fruit Salad with Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '2',
-      title: 'Vegetable & Fruit Salad with Indian Spices',
+      title: 'Vegetable & Fruit Salad with Kader Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '3',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '4',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '5',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '6',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '7',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '8',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '9',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '10',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '11',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
     {
       id: '12',
       title: 'Vegetable & Fruit Salad with Indian Spices',
       image: require('../assets/video.png'),
+      author: {
+        name: 'Tarifi Paylaşan Kişi',
+        avatar: 'avatar-url',
+      },
+      cookTime: '30 dakika',
+      serving: '4 kişilik',
+      ingredients: ['Malzeme 1', 'Malzeme 2', 'Malzeme 3'],
+      instructions: ['Adım 1', 'Adım 2', 'Adım 3'],
+      comments: [
+        {
+          author: {
+            name: 'Kullanıcı 1',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 1',
+        },
+        {
+          author: {
+            name: 'Kullanıcı 2',
+            avatar: 'avatar-url',
+          },
+          text: 'Yorum 2',
+        },
+      ],
     },
   ];
-  interface Item {
-    id: string;
-    title: string;
-    image: any;
-  }
 
-  const renderItem = ({item}: {item: Item}) => (
-    <View style={styles.recipeItem}>
-      <Image source={item.image} style={styles.recipeImage} />
-      <Text style={styles.recipeTitle}>{item.title}</Text>
-    </View>
+  const renderItem = ({item}: {item: Recipe}) => (
+      <TouchableOpacity onPress={() => navigation.navigate('RecipeDetailScreen', { recipe: item })}
+      style={styles.recipeItem}>
+        <Image source={item.image} style={styles.recipeImage} />
+        <Text style={styles.recipeTitle}>{item.title}</Text>
+      </TouchableOpacity>
   );
   return (
     <View style={styles.container} >
@@ -83,7 +388,7 @@ const Discover = () => {
       <FlatList
         data={DATA}
         renderItem={renderItem}
-        keyExtractor={(item: Item) => item.id}
+        keyExtractor={(item: Recipe) => item.id}
         numColumns={2}
         columnWrapperStyle={styles.recipeList}
       />
