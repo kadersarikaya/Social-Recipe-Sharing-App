@@ -1,16 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import React, {useContext} from 'react';
-import { SavedRecipesContext } from '../components/context/saveContext';
+import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useContext } from 'react';
+import { SavedRecipesContext } from '../components/context/saveContext.js';
 import Bookmark from '../components/Bookmark';
 
 const Saved = () => {
-    const {savedRecipes, unsaveRecipe} = useContext(SavedRecipesContext);
+    const { savedRecipes, unsaveRecipe } = useContext(SavedRecipesContext);
 
     return (
         <View style={
-            { flex: 1, backgroundColor: '#FFF', paddingHorizontal: 20, }
+            { flex: 1, backgroundColor: '#FFF', paddingHorizontal: 20}
         } >
             <Text style={{
                 fontSize: 24,
@@ -18,7 +18,7 @@ const Saved = () => {
                 color: '#303030',
                 marginBottom: 20,
                 marginTop: 20,
-                }} >
+            }} >
                 Saved Recipes
             </Text>
             {savedRecipes.length === 0 ? (

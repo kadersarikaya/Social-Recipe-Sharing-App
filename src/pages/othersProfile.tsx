@@ -1,24 +1,32 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 interface Recipe {
-    id: number;
+    id: string;
     title: string;
     image: any;
 }
+interface User {
+    id: string;
+    name: string;
+    location: string;
+    followers: number;
+    following: number;
+    postNum: number;
+    recipeTitles: string[];
+    postImages: any[];
+    username: string;
+    profilePicture: any;
+}
 
-const recipes: Recipe[] = [
-    { id: 1, title: 'Tarif 1', image: require('../assets/video.png') },
-    { id: 2, title: 'Tarif 2', image: require('../assets/video1.png') },
-    { id: 2, title: 'Tarif 2', image: require('../assets/video2.png') },
-    { id: 1, title: 'Tarif 1', image: require('../assets/video.png') },
-    { id: 2, title: 'Tarif 2', image: require('../assets/video1.png') },
-    { id: 2, title: 'Tarif 2', image: require('../assets/video.png') },
-];
 
-const ProfileScreen: React.FC = () => {
-    const renderRecipeItem: React.FC<{ item: Recipe }> = ({ item }) => (
+const ProfileScreen: React.FC<{ route: { params: { user: User } } }> = ({ route }) => {
+    const { user } = route.params;
+    const navigation: any = useNavigation();
+
+    const renderRecipeItem = ({ item }: { item: Recipe }) => (
         <View style={styles.recipeItem}>
             <Image source={item.image} style={styles.recipeImage} />
             <Text style={styles.recipeTitle}>{item.title}</Text>
@@ -27,14 +35,16 @@ const ProfileScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton}>
+            <TouchableOpacity onPress={
+                () => navigation.goBack()
+            } style={styles.backButton}>
                 <Text style={styles.backButtonText}>{'< Back'}</Text>
             </TouchableOpacity>
             <View style={styles.profileInfo}>
                 <Image source={require('../assets/profilepic.jpg')} style={styles.profilePicture} />
                 <View>
-                    <Text style={styles.name}>Adınız</Text>
-                    <Text style={styles.username}>@kullanici_adi</Text>
+                    <Text style={styles.name}>{user.name}</Text>
+                    <Text style={styles.username}>{`@${user.username}`}</Text>
                 </View>
                 <TouchableOpacity style={styles.followButton}>
                     <Text style={styles.followButtonText}>Follow</Text>
@@ -42,22 +52,26 @@ const ProfileScreen: React.FC = () => {
             </View>
             <View style={styles.statsContainer}>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>245</Text>
+                    <Text style={styles.statsNum}>{user.postNum}</Text>
                     <Text style={styles.statsText}>Recipes</Text>
                 </View>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>127</Text>
+                    <Text style={styles.statsNum}>{user.following}</Text>
                     <Text style={styles.statsText}>Following</Text>
                 </View>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>29.5K</Text>
+                    <Text style={styles.statsNum}>{user.followers}</Text>
                     <Text style={styles.statsText}>Followers</Text>
                 </View>
             </View>
             <FlatList
-                data={recipes}
+                data={user.recipeTitles.map((title, index) => ({
+                    id: index.toString(),
+                    title: title,
+                    image: user.postImages[index],
+                }))}
                 renderItem={renderRecipeItem}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.id}
                 numColumns={2}
                 columnWrapperStyle={styles.recipeList}
             />

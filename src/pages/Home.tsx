@@ -3,10 +3,9 @@
 import { View, Text, FlatList, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState, useEffect, useContext } from 'react';
 import styles from '../styles/HomeStyles';
-import {SavedRecipesContext} from '../components/context/saveContext';
+import { SavedRecipesContext } from '../components/context/saveContext.js';
 import Bookmark from '../components/Bookmark';
-import {useNavigation} from '@react-navigation/native';
-
+import { useNavigation } from '@react-navigation/native';
 
 interface Meal {
   name: string;
@@ -97,7 +96,7 @@ interface Item {
 }
 
 const Home = () => {
-  const {savedRecipes, saveRecipe, unsaveRecipe} = useContext(SavedRecipesContext);
+  const { savedRecipes, saveRecipe, unsaveRecipe } = useContext(SavedRecipesContext);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
   const navigation: any = useNavigation();
@@ -138,10 +137,10 @@ const Home = () => {
       selectedCategoryIndex === index && styles.selectedCategoryBtn,
     ]}
       onPress={() => handleCategoryPress(item, index)}>
-     <Text style={[
-       styles.categoryTxt,
-       selectedCategoryIndex === index && styles.selectedCategoryTxt,
-     ]}>{item.name}</Text>
+      <Text style={[
+        styles.categoryTxt,
+        selectedCategoryIndex === index && styles.selectedCategoryTxt,
+      ]}>{item.name}</Text>
     </TouchableOpacity>
   );
   const renderItem = ({ item }: { item: Item }) => {

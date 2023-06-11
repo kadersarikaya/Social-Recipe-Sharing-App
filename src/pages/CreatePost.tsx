@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Image, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 
 const RecipeCreationPage = () => {
     const [recipeTitle, setRecipeTitle] = useState('');
     const [cookTime, setCookTime] = useState('');
     const [serves, setServes] = useState('');
     const [ingredients, setIngredients] = useState(['']);
-    const [instructions, setInstructions] = useState(['']); 
+    const [instructions, setInstructions] = useState(['']);
 
     const handleAddIngredient = () => {
         setIngredients([...ingredients, '']);
@@ -31,7 +31,7 @@ const RecipeCreationPage = () => {
 
     const renderIngredients = () => {
         return ingredients.map((ingredient, index) => (
-            <TextInput
+            <TextInput style={styles.input}
                 key={index}
                 value={ingredient}
                 onChangeText={(text) => handleIngredientChange(text, index)}

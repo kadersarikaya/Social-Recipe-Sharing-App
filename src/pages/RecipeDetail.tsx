@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
@@ -31,11 +31,11 @@ interface User {
   id: string;
   name: string;
   location: string;
-  postImages: any[];  
-  recipeTitles: string[];
   followers: number;
   following: number;
   postNum: number;
+  recipeTitles: string[];
+  postImages: any[];
   username: string;
   profilePicture: any;
 }
@@ -53,12 +53,36 @@ interface Props {
 }
 
 const RecipeDetail: React.FC<Props> = ({ route }) => {
+  const [comment, setComment] = useState('');
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [followNum, setFollowNum] = useState(0);
+  const [likeNum, setLikeNum] = useState(0);
+
+  const handleFollow = () => {
+    setIsFollowed(!isFollowed);
+    if (isFollowed) {
+      setFollowNum(followNum - 1);
+    } else {
+      setFollowNum(followNum + 1);
+    }
+  };
+
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    if (isLiked) {
+      setLikeNum(likeNum - 1);
+    } else {
+      setLikeNum(likeNum + 1);
+    }
+  };
+
   const { recipe } = route.params;
   const navigation:any = useNavigation();
 
   const selectedUser: User = {
     id: '1',
-    name: 'Adınız',
+    name: 'Kader Sarikaya',
     location: 'Istanbul, Turkey',
     postImages: [
       require('../assets/video.png'),
@@ -67,10 +91,10 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
       require('../assets/video.png'),
     ],
     recipeTitles: ['Tarif 1', 'Tarif 2', 'Tarif 3', 'Tarif 4'],
-    followers: 29500,
+    followers: followNum,
     following: 127,
     postNum: 4,
-    username: '@kullanici_adi',
+    username: 'kaders',
     profilePicture: require('../assets/profilepic.jpg'),
   };
 
@@ -78,7 +102,7 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
     navigation.navigate('Discover'); // Discover sayfasına yönlendirme
   };
   const handleProfile = () => {
-    navigation.navigate('ProfileScreen', { user: selectedUser }); // Profile sayfasına yönlendirme
+    navigation.navigate('ProfileScreen', { user: selectedUser}); // Profile sayfasına yönlendirme
   };
   return (
     <ScrollView style={styles.container} >
@@ -89,8 +113,9 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
         </TouchableOpacity>
         <View style={styles.interaction} >
             <View style={styles.react} >
-              <TouchableOpacity>
-                <Image source={
+              <TouchableOpacity onPress={handleLike} >
+                <Image style={isLiked ? {tintColor: 'red'} : {tintColor: 'black'}}
+                 source={
                   require('../assets/heart.png')
                 } />
               </TouchableOpacity>
@@ -110,7 +135,7 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
           styles.likenum
           } >
           <Text style={styles.numLikeTxt} >
-            100 likes
+            { likeNum } likes
           </Text>
         </View>
       </View>
@@ -118,17 +143,19 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
       <View style={styles.horizontalLine} />
       <View style={styles.profileInfo}>
         <TouchableOpacity onPress={handleProfile} style={styles.profileLeft} >
-        <Image source={require('../assets/profilepic.jpg')} style={styles.profilePicture} />
+        <Image source={selectedUser.profilePicture} style={styles.profilePicture} />
           <View style={{marginLeft: 10}} >
-            <Text style={styles.name}>Adınız</Text>
-            <View style={{flexDirection: 'row',}} >
+            <Text style={styles.name}>{selectedUser.name}</Text>
+            <View style={{flexDirection: 'row'}} >
               <Image source={require('../assets/location.png')}  />
-              <Text style={{marginLeft: 5,}} >Location name</Text>
+              <Text style={{marginLeft: 5}} >Location</Text>
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.followButton}>
-          <Text style={styles.followButtonText}>Follow</Text>
+        <TouchableOpacity onPress={handleFollow} style={styles.followButton}>
+          <Text style={styles.followButtonText}>{
+            isFollowed ? 'Unfollow' : 'Follow'
+          } </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.infoRecipe} >
@@ -139,7 +166,7 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
         </View>
         <View style={styles.cookBox}>
           <Text style={styles.BoxTxt}>{recipe.serving}
-            <Text>Serving</Text>
+            <Text> Serving</Text>
           </Text>
         </View>
       </View>
