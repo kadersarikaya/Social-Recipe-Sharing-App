@@ -1,12 +1,45 @@
 /* eslint-disable prettier/prettier */
 import { SafeAreaView, TouchableOpacity, Text, View, StyleSheet, TextInput } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
+import axios from 'axios';
 
 interface RegisterProps {
     navigation: any
 }
 
 const Register : React.FC<RegisterProps> = ({navigation}) => {
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleUsernameChange = (value: string) => {
+        setUsername(value);
+    };
+
+    const handleEmailChange = (value: string) => {
+        setEmail(value);
+    };
+
+    const handlePasswordChange = (value: string) => {
+        setPassword(value);
+    };
+
+    const handleRegister = () => {
+        const data = {
+            username: username,
+            email: email,
+            password: password,
+        };
+        axios
+            .post('https://rest-api-ngr2.onrender.com/api/auth/register', data)
+            .then(() => {
+                console.log('Kayıt işlemi başarılı');
+                navigation.navigate('Login');
+            })
+            .catch((error) => {
+                console.error('Kayıt hatası:', error);
+            });
+    };
     return (
         <SafeAreaView style={styles.container}>
             <View>
@@ -16,17 +49,27 @@ const Register : React.FC<RegisterProps> = ({navigation}) => {
             <View>
                 <View style={styles.inputPart}>
                     <Text style={styles.inputDesc}>Username</Text>
-                    <TextInput style={styles.input} placeholder="" />
+                    <TextInput style={styles.input} placeholder=""
+                        value={username}
+                        onChangeText={handleUsernameChange}
+                    />
                 </View>
                 <View style={styles.inputPart}>
                     <Text style={styles.inputDesc}>Email</Text>
-                    <TextInput style={styles.input} placeholder="" />
+                    <TextInput style={styles.input}
+                        value={email}
+                        onChangeText={handleEmailChange}
+                    placeholder="" />
                 </View>
                 <View style={styles.inputPart}>
                     <Text style={styles.inputDesc}>Password</Text>
-                    <TextInput style={styles.input} placeholder="" />
+                    <TextInput style={styles.input}
+                        secureTextEntry={true}
+                        value={password}
+                        onChangeText={handlePasswordChange}
+                    placeholder="" />
                 </View>
-                <TouchableOpacity style={styles.button} >
+                <TouchableOpacity onPress={handleRegister} style={styles.button} >
                     <Text style={styles.btnText} >Sign Up</Text>
                 </TouchableOpacity>
                 <Text style={{marginTop: 10}} >
@@ -52,6 +95,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         borderRadius: 10,
         borderColor: '#D9D9D9',
+        color: '#303030',
     },
     inputPart: {
         marginTop: 30,
@@ -59,13 +103,16 @@ const styles = StyleSheet.create({
     inputDesc: {
         fontSize: 14,
         marginBottom: 5,
+        color: '#303030',
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
+        color: '#303030',
     },
     span: {
         fontSize: 11,
+        color: '#303030',
     },
     button: {
         marginTop: 30,
@@ -81,7 +128,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     cta: {
-        color: '#E23E3E',
+        color: '#303030',
     },
 });
 

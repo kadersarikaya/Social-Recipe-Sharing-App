@@ -17,7 +17,7 @@ const recipes: Recipe[] = [
     { id: 2, title: 'Tarif 2', image: require('../assets/video.png') },
 ];
 
-const Profile: React.FC = () => {
+const Profile = () => {
     const renderRecipeItem: React.FC<{ item: Recipe }> = ({ item }) => (
         <View style={styles.recipeItem}>
             <Image source={item.image} style={styles.recipeImage} />

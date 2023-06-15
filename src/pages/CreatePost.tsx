@@ -1,13 +1,15 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
-import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { launchImageLibrary, Asset } from 'react-native-image-picker';
 
-const RecipeCreationPage = () => {
+const RecipeCreationPage: React.FC = () => {
     const [recipeTitle, setRecipeTitle] = useState('');
     const [cookTime, setCookTime] = useState('');
     const [serves, setServes] = useState('');
-    const [ingredients, setIngredients] = useState(['']);
-    const [instructions, setInstructions] = useState(['']);
+    const [ingredients, setIngredients] = useState<string[]>(['']);
+    const [instructions, setInstructions] = useState<string[]>(['']);
+    const [thumbnail, setThumbnail] = useState<Asset | null>(null);
 
     const handleAddIngredient = () => {
         setIngredients([...ingredients, '']);
@@ -31,7 +33,8 @@ const RecipeCreationPage = () => {
 
     const renderIngredients = () => {
         return ingredients.map((ingredient, index) => (
-            <TextInput style={styles.input}
+            <TextInput
+                style={styles.input}
                 key={index}
                 value={ingredient}
                 onChangeText={(text) => handleIngredientChange(text, index)}
@@ -42,7 +45,8 @@ const RecipeCreationPage = () => {
 
     const renderInstructions = () => {
         return instructions.map((instruction, index) => (
-            <TextInput style={styles.input}
+            <TextInput
+                style={styles.input}
                 key={index}
                 value={instruction}
                 onChangeText={(text) => handleInstructionChange(text, index)}
@@ -51,36 +55,44 @@ const RecipeCreationPage = () => {
         ));
     };
 
+    const handleImageSelection = () => {
+        launchImageLibrary({ mediaType: 'photo' }, (response) => {
+            if (!response.didCancel && !response.errorCode) {
+                setThumbnail(
+                    require('../assets/gallery.png')
+                );
+            }
+        });
+    };
+
     return (
         <ScrollView>
-            <View style={styles.container} >
-                <View style={styles.imageBox} >
+            <View style={styles.container}>
+                <View style={styles.imageBox}>
                     <Image
                         style={styles.coverImg}
-                        source={require('../assets/gallery.png')} />
+                        source={thumbnail ? { uri: thumbnail.uri } : require('../assets/gallery.png')}
+                    />
                 </View>
-                <Text style={styles.title} >Enter image URI</Text>
-                <TextInput style={styles.input}
-                    placeholder="Image URI"
-                />
+                <TouchableOpacity style={styles.selectImageBtn} onPress={handleImageSelection}>
+                    <Text style={styles.selectImageText}>Select Image</Text>
+                </TouchableOpacity>
                 <Text style={styles.title}>Title</Text>
-                <TextInput style={styles.input}
+                <TextInput
+                    style={styles.input}
                     value={recipeTitle}
                     onChangeText={setRecipeTitle}
                     placeholder="Recipe Title"
                 />
                 <Text style={styles.title}>Cook Time</Text>
-                <TextInput style={styles.input}
+                <TextInput
+                    style={styles.input}
                     value={cookTime}
                     onChangeText={setCookTime}
                     placeholder="Cook Time"
                 />
                 <Text style={styles.title}>Serves</Text>
-                <TextInput style={styles.input}
-                    value={serves}
-                    onChangeText={setServes}
-                    placeholder="Serves"
-                />
+                <TextInput style={styles.input} value={serves} onChangeText={setServes} placeholder="Serves" />
                 <Text style={styles.title}>Ingredients</Text>
                 {renderIngredients()}
                 <TouchableOpacity style={styles.addBtn} onPress={handleAddIngredient}>
@@ -98,14 +110,13 @@ const RecipeCreationPage = () => {
         </ScrollView>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
         backgroundColor: '#fff',
     },
-    title:{
+    title: {
         fontSize: 20,
         fontWeight: 'bold',
         color: '#303030',
@@ -134,6 +145,20 @@ const styles = StyleSheet.create({
         height: 100,
         width: 100,
         tintColor: '#9E9E9E',
+    },
+    selectImageBtn: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 50,
+        width: '100%',
+        backgroundColor: '#F65859',
+        borderRadius: 30,
+        marginVertical: 10,
+    },
+    selectImageText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     addBtn: {
         alignItems: 'center',
@@ -165,3 +190,4 @@ const styles = StyleSheet.create({
 });
 
 export default RecipeCreationPage;
+

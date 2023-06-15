@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
-// import Register from './src/Register';
-// import Login from './src/Login';
+import Register from './src/pages/Register';
+import Login from './src/pages/Login';
 import Home from './src/pages/Home';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -9,7 +9,7 @@ import StartPage from './src/pages/StartPage';
 import BottomTab from './src/components/BottomTab';
 import {SavedRecipesProvider} from './src/components/context/saveContext';
 import RecipeDetail from './src/pages/RecipeDetail';
-import ProfileScreen from './src/pages/OthersProfile'
+import ProfileScreen from './src/pages/OthersProfile';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -24,8 +24,20 @@ const App = () => {
               headerShown: false,
             }}
           />
-          {/* <Stack.Screen name="Register" component={Register} />
-          <Stack.Screen name="Login" component={Login} /> */}
+          <Stack.Screen
+          name="Register"
+          component={Register}
+          options={{
+            headerShown: false,
+          }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{
+              headerShown: false,
+          }}
+          />
           <Stack.Screen
             name="Home"
             component={Home}

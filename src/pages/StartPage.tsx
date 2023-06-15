@@ -7,7 +7,7 @@ const StartPage = () => {
     const navigation: any = useNavigation();
 
     const handleStartCooking = () => {
-        navigation.navigate('BottomTab'); // Ana sayfaya yönlendirme
+        navigation.navigate('Register');
     };
     return (
         <ImageBackground source={require('../assets/bgImage.png')} style={styles.backgroundImage}>
