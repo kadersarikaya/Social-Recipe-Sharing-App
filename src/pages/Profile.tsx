@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import axios from 'axios';
+import { AuthContext } from '../components/context/AuthContext';
 
 interface Recipe {
     id: number;
@@ -18,6 +20,21 @@ const recipes: Recipe[] = [
 ];
 
 const Profile = () => {
+    const [userData, setUserData] = useState<any>();
+    const { user } = useContext(AuthContext);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const { data } = await axios.get(`https://rest-api-ngr2.onrender.com/api/users/${user._id}`);
+                setUserData(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchUser();
+    }, [user]);
+
     const renderRecipeItem: React.FC<{ item: Recipe }> = ({ item }) => (
         <View style={styles.recipeItem}>
             <Image source={item.image} style={styles.recipeImage} />
@@ -30,8 +47,12 @@ const Profile = () => {
             <View style={styles.profileInfo}>
                 <Image source={require('../assets/profilepic.jpg')} style={styles.profilePicture} />
                 <View style={styles.nameInfo} >
-                    <Text style={styles.name}>Adınız</Text>
-                    <Text style={styles.username}>@kullanici_adi</Text>
+                    <Text style={styles.name}>{
+                        userData?.username
+                    }</Text>
+                    <Text style={styles.username}>@{
+                        userData?.username
+                    }</Text>
                 </View>
             </View>
             <View style={styles.statsContainer}>
@@ -40,11 +61,13 @@ const Profile = () => {
                     <Text style={styles.statsText}>Recipes</Text>
                 </View>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>127</Text>
+                    <Text style={styles.statsNum}>
+                        {userData?.followings.length}
+                    </Text>
                     <Text style={styles.statsText}>Following</Text>
                 </View>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>29.5K</Text>
+                    <Text style={styles.statsNum}>{userData?.followers.length}</Text>
                     <Text style={styles.statsText}>Followers</Text>
                 </View>
             </View>

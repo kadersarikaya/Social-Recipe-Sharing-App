@@ -1,16 +1,57 @@
 /* eslint-disable prettier/prettier */
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { launchImageLibrary, Asset } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
+import axios from 'axios';
+import { AuthContext } from '../components/context/AuthContext';
 
-const RecipeCreationPage: React.FC = () => {
+const RecipeCreationPage = () => {
+    const { user } = useContext(AuthContext);
     const [recipeTitle, setRecipeTitle] = useState('');
     const [cookTime, setCookTime] = useState('');
     const [serves, setServes] = useState('');
-    const [ingredients, setIngredients] = useState<string[]>(['']);
-    const [instructions, setInstructions] = useState<string[]>(['']);
-    const [thumbnail, setThumbnail] = useState<Asset | null>(null);
+    const [ingredients, setIngredients] = useState(['']);
+    const [instructions, setInstructions] = useState(['']);
+    const [file, setFile] = useState(null as any);
 
+    useEffect(() => {
+        console.log('Thumbnail:', file);
+    }, [file]);
+
+    const handleCreatePost = async () => {
+        const newPost = {
+            userId: user._id,
+            title: recipeTitle,
+            cookTime: cookTime,
+            servings: serves,
+            ingredients: ingredients,
+            instructions: instructions,
+            thumbnail: file,
+        };
+        if (file) {
+            const formData = new FormData();
+            const fileName = Date.now() + '.jpg';
+            formData.append('name', fileName);
+            formData.append('file', {
+                uri: file,
+                type: 'image/jpeg',
+                name: fileName,
+            });
+            newPost.thumbnail = fileName;
+            try {
+                await axios.post('https://rest-api-ngr2.onrender.com/api/upload', formData);
+            } catch (err) {
+                console.error('Error uploading image:', err);
+            }
+        }
+
+        try {
+            await axios.post('https://rest-api-ngr2.onrender.com/api/posts', newPost);
+            console.log('Post created successfully');
+        } catch (err) {
+            console.error('Error creating post:', err);
+        }
+    };
     const handleAddIngredient = () => {
         setIngredients([...ingredients, '']);
     };
@@ -57,10 +98,8 @@ const RecipeCreationPage: React.FC = () => {
 
     const handleImageSelection = () => {
         launchImageLibrary({ mediaType: 'photo' }, (response) => {
-            if (!response.didCancel && !response.errorCode) {
-                setThumbnail(
-                    require('../assets/gallery.png')
-                );
+            if (!response.didCancel && !response.errorCode && response.assets && response.assets.length > 0) {
+                setFile(response.assets[0]?.uri || null as any);
             }
         });
     };
@@ -70,8 +109,12 @@ const RecipeCreationPage: React.FC = () => {
             <View style={styles.container}>
                 <View style={styles.imageBox}>
                     <Image
-                        style={styles.coverImg}
-                        source={thumbnail ? { uri: thumbnail.uri } : require('../assets/gallery.png')}
+                        style={file ? styles.coverImg : styles.coverImgPlaceholder}
+                        source={
+                            file
+                                ? { uri: file }
+                                : require('../assets/gallery.png')
+                        }
                     />
                 </View>
                 <TouchableOpacity style={styles.selectImageBtn} onPress={handleImageSelection}>
@@ -104,12 +147,13 @@ const RecipeCreationPage: React.FC = () => {
                     <Text style={styles.addTxt}>+ Add Instruction</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.submitBtn}>
-                <Text style={styles.submitTxt}>Submit</Text>
+            <TouchableOpacity style={styles.submitBtn} onPress={handleCreatePost}>
+                <Text style={styles.submitTxt}>Share</Text>
             </TouchableOpacity>
         </ScrollView>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -142,9 +186,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     coverImg: {
-        height: 100,
-        width: 100,
-        tintColor: '#9E9E9E',
+        width: '100%',
+        height: '100%',
     },
     selectImageBtn: {
         alignItems: 'center',
@@ -154,6 +197,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#F65859',
         borderRadius: 30,
         marginVertical: 10,
+    },
+    coverImgPlaceholder: {
+        width: 100,
+        height: 100,
+        tintColor: '#F65859',
     },
     selectImageText: {
         color: '#fff',
@@ -184,10 +232,9 @@ const styles = StyleSheet.create({
     },
     submitTxt: {
         color: '#fff',
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold',
     },
 });
 
 export default RecipeCreationPage;
-

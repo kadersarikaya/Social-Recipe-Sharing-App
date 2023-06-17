@@ -1,7 +1,9 @@
 /* eslint-disable */
 import { SafeAreaView, TouchableOpacity, Text, View, StyleSheet, TextInput } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import axios from 'axios';
+import { AuthContext } from '../components/context/AuthContext';
+
 interface LoginProps {
     navigation: any
 }
@@ -9,31 +11,37 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const { isFetching, dispatch } = useContext(AuthContext);
   
+  const loginCall = async (userCredential: any, dispatch: (arg0: { type: string; payload?: any; }) => void) => {
+    dispatch({ type: "LOGIN_START" });
+    try {
+      const res = await axios.post('https://rest-api-ngr2.onrender.com/api/auth/login', userCredential);
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+      navigation.navigate('BottomTab');
+    } catch (err) {
+      dispatch({ type: "LOGIN_FAILURE", payload: err });
+    }
+  };
 
+  
   const handleEmailChange = (value: string) => {
     setEmail(value);
+    setIsEmailValid(value.includes('@'));
   };
 
   const handlePasswordChange = (value: string) => {
     setPassword(value);
+    setIsPasswordValid(value.length >= 6);
   };
 
-  const handleLogin = () => {
-    const data = {
-      email: email,
-      password: password,
-    };
-
-    axios
-      .post('https://rest-api-ngr2.onrender.com/api/auth/login', data)
-      .then(() => {
-        console.log('Giriş başarılı');
-        navigation.navigate('BottomTab');
-      })
-      .catch((error) => {
-        console.error('Giriş hatası:', error);
-      });
+  const handleLogin = async () => {
+    loginCall(
+      { email: email, password: password},
+      dispatch
+    );
   };
   return (
   <SafeAreaView style={styles.container}>
@@ -44,18 +52,32 @@ const Login: React.FC<LoginProps> = ({navigation}) => {
       <View>
         <View style={styles.inputPart}>
           <Text style={styles.inputDesc}>Email</Text>
-          <TextInput style={styles.input} 
-            onChangeText={handleEmailChange}
+          <TextInput
+            style={styles.input}
+          onChangeText={handleEmailChange}
           placeholder="" />
         </View>
         <View style={styles.inputPart}>
           <Text style={styles.inputDesc}>Enter Password</Text>
-          <TextInput onChangeText={handlePasswordChange} 
+          <TextInput 
+          onChangeText={handlePasswordChange} 
           secureTextEntry={true}
-          style={styles.input} placeholder="" />
+            style={styles.input}
+             placeholder="" />
         </View>
-        <TouchableOpacity onPress={handleLogin} style={styles.button} >
-          <Text style={styles.btnText}>Login</Text>
+        <TouchableOpacity onPress={handleLogin} 
+          style={
+            [styles.button,
+            (!isEmailValid || !isPasswordValid) && { opacity: 0.5 },
+            ]
+          }
+          disabled={!isEmailValid || !isPasswordValid}
+        > 
+          {isFetching ? (
+            <Text style={styles.btnText}>Loading...</Text>
+          ) : (
+            <Text style={styles.btnText}>Login</Text>
+          )}
         </TouchableOpacity>
         <Text style={{ marginTop: 10 }}>
           Don’t have an account?{' '}
@@ -114,7 +136,10 @@ const styles = StyleSheet.create({
   },
   cta: {
     color: '#303030'
-  }
+  },
+  invalidInput: {
+    borderColor: 'red',
+  },
 });
 
 

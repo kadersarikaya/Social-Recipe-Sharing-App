@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { SafeAreaView, TouchableOpacity, Text, View, StyleSheet, TextInput } from 'react-native';
 import React, {useState} from 'react';
 import axios from 'axios';
-
 interface RegisterProps {
     navigation: any
 }
@@ -11,34 +11,41 @@ const Register : React.FC<RegisterProps> = ({navigation}) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isFetching, setIsFetching] = useState(false);
+    const [isEmailValid, setIsEmailValid] = useState(false);
+    const [isUsernameValid, setIsUsernameValid] = useState(false);
+    const [isPasswordValid, setIsPasswordValid] = useState(false);
 
     const handleUsernameChange = (value: string) => {
         setUsername(value);
+        setIsUsernameValid(value.length >= 3);
     };
 
     const handleEmailChange = (value: string) => {
         setEmail(value);
+        setIsEmailValid(value.includes('@'));
     };
 
     const handlePasswordChange = (value: string) => {
         setPassword(value);
+        setIsPasswordValid(value.length >= 6);
     };
 
-    const handleRegister = () => {
-        const data = {
+    const handleRegister = async () => {
+        setIsFetching(true);
+        const user = {
             username: username,
             email: email,
             password: password,
         };
-        axios
-            .post('https://rest-api-ngr2.onrender.com/api/auth/register', data)
-            .then(() => {
-                console.log('Kayıt işlemi başarılı');
-                navigation.navigate('Login');
-            })
-            .catch((error) => {
-                console.error('Kayıt hatası:', error);
-            });
+        try {
+            await axios.post('https://rest-api-ngr2.onrender.com/api/auth/register', user);
+            setIsFetching(false);
+            navigation.navigate('Login');
+        } catch (error) {
+            console.log(error);
+            setIsFetching(false);
+        }
     };
     return (
         <SafeAreaView style={styles.container}>
@@ -69,8 +76,17 @@ const Register : React.FC<RegisterProps> = ({navigation}) => {
                         onChangeText={handlePasswordChange}
                     placeholder="" />
                 </View>
-                <TouchableOpacity onPress={handleRegister} style={styles.button} >
-                    <Text style={styles.btnText} >Sign Up</Text>
+                <TouchableOpacity onPress={handleRegister} style={
+                    [styles.button,
+                        (!isUsernameValid || !isEmailValid || !isPasswordValid) && { opacity: 0.5 },
+                    ]
+                }
+                    disabled={!isEmailValid || !isPasswordValid} >
+                    {isFetching ? (
+                        <Text style={styles.btnText}>Loading...</Text>
+                    ) : (
+                        <Text style={styles.btnText}>Sign Up</Text>
+                    )}
                 </TouchableOpacity>
                 <Text style={{marginTop: 10}} >
                     Already have an account?

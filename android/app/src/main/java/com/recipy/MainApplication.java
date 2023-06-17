@@ -1,3 +1,4 @@
+//initializeFlipper(this, getReactNativeHost().getReactInstanceManager())
 package com.recipy;
 
 import android.app.Application;
@@ -57,6 +58,6 @@ public class MainApplication extends Application implements ReactApplication {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();
     }
-    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+   // ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 }

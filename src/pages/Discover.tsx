@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import {View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 interface Recipe {
   id: string;
   image: any;
@@ -24,6 +25,7 @@ interface Recipe {
 }
 const Discover = () => {
   const navigation: any = useNavigation();
+  const [posts, setPosts] = useState<any[]>([]);
   const DATA: Recipe[] = [
     {
       id: '1',
@@ -374,6 +376,14 @@ const Discover = () => {
       ],
     },
   ];
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const { data } = await axios.get('https://rest-api-ngr2.onrender.com/api/posts');
+      setPosts(data);
+    };
+    fetchPosts();
+  }
+    , []);
 
   const renderItem = ({item}: {item: Recipe}) => (
       <TouchableOpacity onPress={() => navigation.navigate('RecipeDetailScreen', { recipe: item })}

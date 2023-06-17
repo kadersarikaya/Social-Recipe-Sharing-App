@@ -6,7 +6,6 @@ import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
-
 interface Recipe {
   id: string;
   image: any;
