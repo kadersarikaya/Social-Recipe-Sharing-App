@@ -1,73 +1,34 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
-import React, {useState} from 'react';
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import React, {useState, useContext, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/native';
-
-interface Recipe {
-  id: string;
-  image: any;
-  title: string;
-  author: {
-    name: string;
-    avatar: string;
-  };
-  cookTime: string;
-  serving: string;
-  ingredients: string[];
-  instructions: string[];
-  comments: {
-    author: {
-      name: string;
-      avatar: string;
-    };
-    text: string;
-  }[];
-}
-
-interface User {
-  id: string;
-  name: string;
-  location: string;
-  followers: number;
-  following: number;
-  postNum: number;
-  recipeTitles: string[];
-  postImages: any[];
-  username: string;
-  profilePicture: any;
-}
-
-type RootStackParamList = {
-  RecipeDetailScreen: { recipe: Recipe };
-};
-
-type RecipeDetailScreenRouteProp = RouteProp<RootStackParamList, 'RecipeDetailScreen'>;
-type RecipeDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'RecipeDetailScreen'>;
-
-interface Props {
-  route: RecipeDetailScreenRouteProp;
-  navigation: RecipeDetailScreenNavigationProp;
-}
+import { AuthContext } from '../components/context/AuthContext';
+import axios from 'axios';
 
 
-
-const RecipeDetail: React.FC<Props> = ({ route }) => {
-  const [comment, setComment] = useState('');
-  const [isFollowed, setIsFollowed] = useState(false);
+const RecipeDetail = ({ route }: any) => {
+  const { user } = useContext(AuthContext);
+  const { post } = route.params;
+  const navigation: any = useNavigation();
+  const [userData, setUserData] = useState<any>();
   const [isLiked, setIsLiked] = useState(false);
-  const [followNum, setFollowNum] = useState(0);
   const [likeNum, setLikeNum] = useState(0);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { data } = await axios.get(`https://rest-api-ngr2.onrender.com/api/users/${user._id}`);
+        setUserData(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUser();
+  }, [user]);
+
+
   const handleFollow = () => {
-    setIsFollowed(!isFollowed);
-    if (isFollowed) {
-      setFollowNum(followNum - 1);
-    } else {
-      setFollowNum(followNum + 1);
-    }
   };
 
   const handleLike = () => {
@@ -79,37 +40,17 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
     }
   };
 
-  const { recipe } = route.params;
-  const navigation:any = useNavigation();
-
-  const selectedUser: User = {
-    id: '1',
-    name: 'Kader Sarikaya',
-    location: 'Istanbul, Turkey',
-    postImages: [
-      require('../assets/video.png'),
-      require('../assets/video1.png'),
-      require('../assets/video2.png'),
-      require('../assets/video.png'),
-    ],
-    recipeTitles: ['Tarif 1', 'Tarif 2', 'Tarif 3', 'Tarif 4'],
-    followers: followNum,
-    following: 127,
-    postNum: 4,
-    username: 'kaders',
-    profilePicture: require('../assets/profilepic.jpg'),
-  };
 
   const handleBackPress = () => {
     navigation.navigate('Discover'); // Discover sayfasına yönlendirme
   };
   const handleProfile = () => {
-    navigation.navigate('ProfileScreen', { user: selectedUser}); // Profile sayfasına yönlendirme
+    navigation.navigate('ProfileScreen', {user: userData}); // Profile sayfasına yönlendirme
   };
   return (
     <ScrollView style={styles.container} >
       <View>
-        <Image style={styles.recipeImage} source={recipe.image} />
+        <Image style={styles.recipeImage} source={require('../assets/video.png')} />
         <TouchableOpacity onPress={handleBackPress} style={styles.backBtn} >
           <Text style={styles.backBtnTxt}>{'< Back'}</Text>
         </TouchableOpacity>
@@ -133,50 +74,42 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
               } />
             </TouchableOpacity>
         </View>
-        <View style={
-          styles.likenum
-          } >
-          <Text style={styles.numLikeTxt} >
-            { likeNum } likes
-          </Text>
+        <View style={styles.likenum}>
+          <Text style={styles.numLikeTxt}>likes</Text>
         </View>
       </View>
-      <Text style={styles.title} >{recipe.title}</Text>
+      <Text style={styles.title}>{post?.title}</Text>
       <View style={styles.horizontalLine} />
       <View style={styles.profileInfo}>
         <TouchableOpacity onPress={handleProfile} style={styles.profileLeft} >
-        <Image source={selectedUser.profilePicture} style={styles.profilePicture} />
-          <View style={{marginLeft: 10}} >
-            <Text style={styles.name}>{selectedUser.name}</Text>
-            <View style={{flexDirection: 'row'}} >
-              <Image source={require('../assets/location.png')}  />
-              <Text style={{marginLeft: 5}} >Location</Text>
+        <Image source={require('../assets/profilepic.jpg')} style={styles.profilePicture} />
+          <View style={{ marginLeft: 10 }}>
+              <Text style={styles.name}>{userData?.username}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <Image source={require('../assets/location.png')} />
+              <Text style={{ marginLeft: 5 }}>Location</Text>
             </View>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleFollow} style={styles.followButton}>
-          <Text style={styles.followButtonText}>{
-            isFollowed ? 'Unfollow' : 'Follow'
-          } </Text>
+          <Text style={styles.followButtonText}>follow</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.infoRecipe} >
         <View style={styles.cookBox} >
-          <Text style={styles.BoxTxt}>{recipe.cookTime}
-           <Text> Cook Time</Text>
-          </Text>
+          <Text style={styles.BoxTxt}>{post?.cookTime}</Text>
+          <Text style={{textAlign:'center'}}>Cook Time</Text>
         </View>
         <View style={styles.cookBox}>
-          <Text style={styles.BoxTxt}>{recipe.serving}
-            <Text> Serving</Text>
-          </Text>
+          <Text style={styles.BoxTxt}>{post?.servings}</Text>
+          <Text >Serving</Text>
         </View>
       </View>
       <View style={styles.horizontalLine} />
       <View style={styles.ingrContainer} >
         <Text style={styles.IngredientTitle}>Ingredients</Text>
-        {recipe.ingredients.map((ingredient, index) => (
-          <View key={index} style={{flexDirection: 'row'}} >
+        {post?.ingredients.map((ingredient:any, index:any) => (
+          <View key={index} style={styles.ingredientRow} >
             <Text style={styles.IngredientNum} >{index + 1}</Text>
             <Text key={index} style={styles.IngredientText}>
               {ingredient}
@@ -186,8 +119,8 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
       </View>
       <View style={styles.ingrContainer} >
         <Text style={styles.IngredientTitle}>Instructions</Text>
-        {recipe.instructions.map((instruction, index) => (
-          <View key={index} style={{flexDirection: 'row'}} >
+        {post?.instructions.map((instruction:any, index:any) => (
+          <View key={index} style={styles.instructionRow} >
             <Text style={styles.IngredientNum} >{index + 1}</Text>
             <Text key={index} style={styles.IngredientText}>
               {instruction}
@@ -197,12 +130,12 @@ const RecipeDetail: React.FC<Props> = ({ route }) => {
       </View>
       <View style={styles.ingrContainer}>
         <Text style={styles.IngredientTitle}>Comments</Text>
-        {recipe.comments.map((comment, index) => (
+        {post?.comments.map((comment:any, index:any) => (
           <View key={index} style={styles.commentContainer}>
             <Image source={require('../assets/profilepic.jpg')} style={styles.commentAvatar} />
             <View style={styles.commentContent}>
-              <Text style={styles.commentAuthor}>{comment.author.name}</Text>
-              <Text style={styles.commentText}>{comment.text}</Text>
+              <Text style={styles.commentAuthor}>{`user${index}`}</Text>
+              <Text style={styles.commentText}>{comment}</Text>
             </View>
           </View>
         ))}
@@ -305,12 +238,14 @@ const styles = StyleSheet.create({
   },
   cookBox: {
     width: 100,
-    height: 50,
+    height: 100,
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginHorizontal: 20,
     marginVertical: 10,
+    textAlign: 'center',
   },
+
   BoxTxt: {
     color: '#000',
     fontSize: 12,
@@ -332,10 +267,20 @@ const styles = StyleSheet.create({
     color: '#303030',
   },
   IngredientText: {
+    flex: 1,
     fontSize: 16,
-    marginHorizontal: 20,
-    marginVertical: 10,
+    marginLeft: 10,
     color: '#303030',
+  },
+  ingredientRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+  instructionRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginVertical: 5,
   },
   IngredientNum: {
     fontSize: 12,
@@ -345,7 +290,6 @@ const styles = StyleSheet.create({
     height: 20,
     textAlign: 'center',
     marginHorizontal: 20,
-    marginVertical: 10,
     color: '#F5484A',
     fontWeight: 'bold',
     paddingVertical: 2,

@@ -1,37 +1,34 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
-interface Recipe {
-    id: string;
-    title: string;
-    image: any;
-}
-interface User {
-    id: string;
-    name: string;
-    location: string;
-    followers: number;
-    following: number;
-    postNum: number;
-    recipeTitles: string[];
-    postImages: any[];
-    username: string;
-    profilePicture: any;
-}
-
-
-const ProfileScreen: React.FC<{ route: { params: { user: User } } }> = ({ route }) => {
+const ProfileScreen = ({ route }: any) => {
     const { user } = route.params;
     const navigation: any = useNavigation();
+    const [userData, setUserData] = useState<any>();
+    const [posts, setPosts] = useState<any>();
 
-    const renderRecipeItem = ({ item }: { item: Recipe }) => (
-        <View style={styles.recipeItem}>
-            <Image source={item.image} style={styles.recipeImage} />
-            <Text style={styles.recipeTitle}>{item.title}</Text>
-        </View>
-    );
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const { data } = await axios.get(`https://rest-api-ngr2.onrender.com/api/users/${user._id}`);
+                setUserData(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchUser();
+    }, [user]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const res = await axios.get(`https://rest-api-ngr2.onrender.com/api/posts/profile/${user._id}`);
+            setPosts(res.data);
+        };
+        fetchPosts();
+    }, [user]);
 
     return (
         <View style={styles.container}>
@@ -43,8 +40,8 @@ const ProfileScreen: React.FC<{ route: { params: { user: User } } }> = ({ route 
             <View style={styles.profileInfo}>
                 <Image source={require('../assets/profilepic.jpg')} style={styles.profilePicture} />
                 <View>
-                    <Text style={styles.name}>{user.name}</Text>
-                    <Text style={styles.username}>{`@${user.username}`}</Text>
+                    <Text style={styles.name}>{userData?.username}</Text>
+                    <Text style={styles.username}>{`@${userData?.username}`}</Text>
                 </View>
                 <TouchableOpacity style={styles.followButton}>
                     <Text style={styles.followButtonText}>Follow</Text>
@@ -52,26 +49,27 @@ const ProfileScreen: React.FC<{ route: { params: { user: User } } }> = ({ route 
             </View>
             <View style={styles.statsContainer}>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>{user.postNum}</Text>
+                    <Text style={styles.statsNum}>{posts?.length}</Text>
                     <Text style={styles.statsText}>Recipes</Text>
                 </View>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>{user.following}</Text>
+                    <Text style={styles.statsNum}>{userData?.followings?.length}</Text>
                     <Text style={styles.statsText}>Following</Text>
                 </View>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>{user.followers}</Text>
+                    <Text style={styles.statsNum}>{userData?.followers?.length}</Text>
                     <Text style={styles.statsText}>Followers</Text>
                 </View>
             </View>
             <FlatList
-                data={user.recipeTitles.map((title, index) => ({
-                    id: index.toString(),
-                    title: title,
-                    image: user.postImages[index],
-                }))}
-                renderItem={renderRecipeItem}
-                keyExtractor={(item) => item.id}
+                data={posts}
+                renderItem={({ item }) => (
+                    <View style={styles.recipeItem}>
+                        <Image source={require('../assets/video.png')} style={styles.recipeImage} />
+                        <Text style={styles.recipeTitle}>{item.title}</Text>
+                    </View>
+                )}
+                keyExtractor={(item) => item._id}
                 numColumns={2}
                 columnWrapperStyle={styles.recipeList}
             />

@@ -1,10 +1,9 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
 import { AuthContext } from '../components/context/AuthContext';
-
 const RecipeCreationPage = () => {
     const { user } = useContext(AuthContext);
     const [recipeTitle, setRecipeTitle] = useState('');
@@ -12,13 +11,16 @@ const RecipeCreationPage = () => {
     const [serves, setServes] = useState('');
     const [ingredients, setIngredients] = useState(['']);
     const [instructions, setInstructions] = useState(['']);
-    const [file, setFile] = useState(null as any);
+    const [file, setFile ] = useState(null as any);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         console.log('Thumbnail:', file);
     }, [file]);
 
     const handleCreatePost = async () => {
+        const fileExtension = file.split('.').pop().toLowerCase(); // Get the file extension in lowercase
+        setIsLoading(true);
         const newPost = {
             userId: user._id,
             title: recipeTitle,
@@ -26,31 +28,39 @@ const RecipeCreationPage = () => {
             servings: serves,
             ingredients: ingredients,
             instructions: instructions,
-            thumbnail: file,
+            file: file,
         };
         if (file) {
             const formData = new FormData();
-            const fileName = Date.now() + '.jpg';
+            const fileName = Date.now() + '.' + fileExtension;
             formData.append('name', fileName);
             formData.append('file', {
                 uri: file,
-                type: 'image/jpeg',
+                type: `image/${fileExtension === 'jpg' ? 'jpeg' : fileExtension}`, // Use 'jpeg' for 'jpg' files
                 name: fileName,
             });
-            newPost.thumbnail = fileName;
+            newPost.file = fileName;
             try {
                 await axios.post('https://rest-api-ngr2.onrender.com/api/upload', formData);
+                console.log('Thumbnail uploaded successfully');
             } catch (err) {
-                console.error('Error uploading image:', err);
+                console.error('Error uploading thumbnail:', err);
             }
         }
 
         try {
             await axios.post('https://rest-api-ngr2.onrender.com/api/posts', newPost);
             console.log('Post created successfully');
+            setRecipeTitle('');
+            setCookTime('');
+            setServes('');
+            setIngredients(['']);
+            setInstructions(['']);
+            setFile(null as any);
         } catch (err) {
             console.error('Error creating post:', err);
         }
+        setIsLoading(false);
     };
     const handleAddIngredient = () => {
         setIngredients([...ingredients, '']);
@@ -95,29 +105,34 @@ const RecipeCreationPage = () => {
             />
         ));
     };
-
-    const handleImageSelection = () => {
-        launchImageLibrary({ mediaType: 'photo' }, (response) => {
-            if (!response.didCancel && !response.errorCode && response.assets && response.assets.length > 0) {
-                setFile(response.assets[0]?.uri || null as any);
+    const handleFileSelection = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.allFiles],
+            });
+            console.log('Selected File:', res);
+            if (res[0]?.uri) {
+                setFile(res[0].uri);
             }
-        });
+        } catch (err) {
+            console.log('File selection error:', err);
+        }
     };
 
     return (
         <ScrollView>
             <View style={styles.container}>
                 <View style={styles.imageBox}>
-                    <Image
-                        style={file ? styles.coverImg : styles.coverImgPlaceholder}
-                        source={
-                            file
-                                ? { uri: file }
-                                : require('../assets/gallery.png')
-                        }
-                    />
+                    {file ? (
+                        <Image style={styles.coverImg} source={{ uri: file }} />
+                    ) : (
+                        <Image
+                            style={styles.coverImgPlaceholder}
+                            source={require('../assets/gallery.png')}
+                        />
+                    )}
                 </View>
-                <TouchableOpacity style={styles.selectImageBtn} onPress={handleImageSelection}>
+                <TouchableOpacity style={styles.selectImageBtn} onPress={handleFileSelection}>
                     <Text style={styles.selectImageText}>Select Image</Text>
                 </TouchableOpacity>
                 <Text style={styles.title}>Title</Text>
@@ -147,8 +162,16 @@ const RecipeCreationPage = () => {
                     <Text style={styles.addTxt}>+ Add Instruction</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.submitBtn} onPress={handleCreatePost}>
-                <Text style={styles.submitTxt}>Share</Text>
+            <TouchableOpacity
+                style={styles.submitBtn}
+                onPress={handleCreatePost}
+                disabled={isLoading}
+            >
+                {isLoading ? (
+                    <Text style={styles.submitTxt}>Loading...</Text>
+                ) : (
+                    <Text style={styles.submitTxt}>Share</Text>
+                )}
             </TouchableOpacity>
         </ScrollView>
     );

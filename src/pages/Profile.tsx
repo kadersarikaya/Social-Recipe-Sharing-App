@@ -4,24 +4,11 @@ import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { AuthContext } from '../components/context/AuthContext';
 
-interface Recipe {
-    id: number;
-    title: string;
-    image: any;
-}
-
-const recipes: Recipe[] = [
-    { id: 1, title: 'Tarif 1', image: require('../assets/video.png') },
-    { id: 2, title: 'Tarif 2', image: require('../assets/video1.png') },
-    { id: 2, title: 'Tarif 2', image: require('../assets/video2.png') },
-    { id: 1, title: 'Tarif 1', image: require('../assets/video.png') },
-    { id: 2, title: 'Tarif 2', image: require('../assets/video1.png') },
-    { id: 2, title: 'Tarif 2', image: require('../assets/video.png') },
-];
 
 const Profile = () => {
     const [userData, setUserData] = useState<any>();
     const { user } = useContext(AuthContext);
+    const [posts, setPosts] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -35,12 +22,14 @@ const Profile = () => {
         fetchUser();
     }, [user]);
 
-    const renderRecipeItem: React.FC<{ item: Recipe }> = ({ item }) => (
-        <View style={styles.recipeItem}>
-            <Image source={item.image} style={styles.recipeImage} />
-            <Text style={styles.recipeTitle}>{item.title}</Text>
-        </View>
-    );
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const res = await axios.get(`https://rest-api-ngr2.onrender.com/api/posts/profile/${user._id}`);
+            setPosts(res.data);
+        };
+        fetchPosts();
+    }
+    , [user]);
 
     return (
         <View style={styles.container}>
@@ -57,7 +46,7 @@ const Profile = () => {
             </View>
             <View style={styles.statsContainer}>
                 <View style={styles.statsItem}>
-                    <Text style={styles.statsNum}>245</Text>
+                    <Text style={styles.statsNum}>{posts.length}</Text>
                     <Text style={styles.statsText}>Recipes</Text>
                 </View>
                 <View style={styles.statsItem}>
@@ -72,9 +61,14 @@ const Profile = () => {
                 </View>
             </View>
             <FlatList
-                data={recipes}
-                renderItem={renderRecipeItem}
-                keyExtractor={(item) => item.id.toString()}
+                data={posts}
+                renderItem={({ item }) => (
+                    <View style={styles.recipeItem}>
+                        <Image source={{ uri: item.thumbnail }} style={styles.recipeImage} />
+                        <Text style={styles.recipeTitle}>{item.title}</Text>
+                    </View>
+                )}
+                keyExtractor={(item) => item._id}
                 numColumns={2}
                 columnWrapperStyle={styles.recipeList}
             />
@@ -150,8 +144,8 @@ const styles = StyleSheet.create({
     },
     recipeList: {
         justifyContent: 'space-between',
-        paddingHorizontal: 10,
-        marginTop: 10,
+        paddingHorizontal: 25,
+        marginTop: 5,
     },
     recipeItem: {
         width: '48%',

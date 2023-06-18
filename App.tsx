@@ -48,18 +48,18 @@ const App = () => {
               }}
             />
             <Stack.Screen
-              name="RecipeDetailScreen"
-              component={RecipeDetail}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
             name="ProfileScreen"
             component={ProfileScreen}
             options={{
               headerShown: false,
             }}
+            />
+            <Stack.Screen
+              name="RecipeDetailScreen"
+              component={RecipeDetail}
+              options={{
+                headerShown: false,
+              }}
             />
             <Stack.Screen
               name="BottomTab"

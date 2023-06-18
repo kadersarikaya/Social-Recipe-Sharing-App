@@ -7,6 +7,7 @@ import { setCookie, getCookie } from '../../utils/cookieUtils'; // Custom utilit
 const INITIAL_STATE = {
   user:{
     _id: '',
+    username: '',
   },
   isFetching: false,
   error: false,
