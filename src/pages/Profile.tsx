@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, {useState, useEffect, useContext} from 'react';
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Modal, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { AuthContext } from '../components/context/AuthContext';
 
@@ -9,6 +9,8 @@ const Profile = () => {
     const [userData, setUserData] = useState<any>();
     const { user } = useContext(AuthContext);
     const [posts, setPosts] = useState<any[]>([]);
+    const [selectedPost, setSelectedPost] = useState<any>(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -19,17 +21,37 @@ const Profile = () => {
                 console.log(error);
             }
         };
-        fetchUser();
-    }, [user]);
-
-    useEffect(() => {
         const fetchPosts = async () => {
             const res = await axios.get(`https://rest-api-ngr2.onrender.com/api/posts/profile/${user._id}`);
             setPosts(res.data);
         };
+        fetchUser();
         fetchPosts();
     }
     , [user]);
+
+    const handleDeletePost = async (postId: string, userId: string) => {
+        try {
+            await axios.delete(`https://rest-api-ngr2.onrender.com/api/posts/${postId}`, {
+                data: { userId },
+            });
+            setPosts(posts.filter((post) => post._id !== postId));
+            setModalVisible(false);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
+
+    const openModal = (post: any) => {
+        setSelectedPost(post);
+        setModalVisible(true);
+    };
+
+    const closeModal = () => {
+        setSelectedPost(null);
+        setModalVisible(false);
+    };
 
     return (
         <View style={styles.container}>
@@ -64,14 +86,35 @@ const Profile = () => {
                 data={posts}
                 renderItem={({ item }) => (
                     <View style={styles.recipeItem}>
-                        <Image source={{ uri: item.thumbnail }} style={styles.recipeImage} />
+                        <Image source={require('../assets/video.png')} style={styles.recipeImage} />
                         <Text style={styles.recipeTitle}>{item.title}</Text>
+                        <TouchableOpacity
+                            style={styles.deleteButton}
+                            onPress={() => openModal(item)}
+                        >
+                            <Text style={styles.deleteButtonText}>...</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
                 keyExtractor={(item) => item._id}
                 numColumns={2}
                 columnWrapperStyle={styles.recipeList}
             />
+            <Modal visible={modalVisible} animationType="slide" transparent>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalText}>Are you sure you want to delete this post?</Text>
+                        <View style={styles.modalButtonsContainer}>
+                            <TouchableOpacity style={styles.modalButton} onPress={() => handleDeletePost(selectedPost?._id, selectedPost?.userId)}>
+                                <Text style={styles.modalButtonText}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
+                                <Text style={styles.modalButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -172,6 +215,49 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
+    },
+    deleteButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        zIndex: 50,
+        backgroundColor: 'transparent',
+    },
+    deleteButtonText: {
+        fontSize: 24,
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    modalText: {
+        fontSize: 18,
+        marginBottom: 20,
+    },
+    modalButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    modalButton: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: '#F5484A',
+        borderRadius: 20,
+        marginHorizontal: 10,
+    },
+    modalButtonText: {
+        fontSize: 16,
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
 

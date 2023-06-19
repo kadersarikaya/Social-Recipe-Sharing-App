@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../components/context/AuthContext';
 import axios from 'axios';
 
-
 const RecipeDetail = ({ route }: any) => {
   const { user } = useContext(AuthContext);
   const { post } = route.params;
@@ -14,18 +13,50 @@ const RecipeDetail = ({ route }: any) => {
   const [userData, setUserData] = useState<any>();
   const [isLiked, setIsLiked] = useState(false);
   const [likeNum, setLikeNum] = useState(0);
+  const [commentText, setCommentText] = useState('');
+  const [comments, setComments] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const { data } = await axios.get(`https://rest-api-ngr2.onrender.com/api/users/${user._id}`);
+        const { data } = await axios.get(`https://rest-api-ngr2.onrender.com/api/users/${post.userId}`);
         setUserData(data);
       } catch (error) {
         console.log(error);
       }
     };
+
+    const fetchComments = async () => {
+      try {
+        const { data } = await axios.get(`https://rest-api-ngr2.onrender.com/api/posts/${post._id}/comments`);
+        setComments(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchUser();
-  }, [user]);
+    fetchComments();
+  }, [post.userId, post._id]);
+
+
+  const handleCommentPost = async () => {
+    try {
+      // Send the comment to the server
+      const { data } = await axios.post(
+        `https://rest-api-ngr2.onrender.com/api/posts/${post._id}/comment`,
+        {
+          comment: commentText,
+        }
+      );
+
+      // Clear the comment input and update the comments state
+      setCommentText('');
+      setComments([...comments, data]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
   const handleFollow = () => {
@@ -45,7 +76,12 @@ const RecipeDetail = ({ route }: any) => {
     navigation.navigate('Discover'); // Discover sayfasına yönlendirme
   };
   const handleProfile = () => {
-    navigation.navigate('ProfileScreen', {user: userData}); // Profile sayfasına yönlendirme
+    if (post.userId === user._id) {
+      navigation.navigate('Profile');
+    }
+    else {
+      navigation.navigate('ProfileScreen', {user: userData});
+    }// Profile sayfasına yönlendirme
   };
   return (
     <ScrollView style={styles.container} >
@@ -128,27 +164,28 @@ const RecipeDetail = ({ route }: any) => {
           </View>
         ))}
       </View>
-      <View style={styles.ingrContainer}>
-        <Text style={styles.IngredientTitle}>Comments</Text>
-        {post?.comments.map((comment:any, index:any) => (
-          <View key={index} style={styles.commentContainer}>
-            <Image source={require('../assets/profilepic.jpg')} style={styles.commentAvatar} />
-            <View style={styles.commentContent}>
-              <Text style={styles.commentAuthor}>{`user${index}`}</Text>
-              <Text style={styles.commentText}>{comment}</Text>
-            </View>
-          </View>
-        ))}
-      </View>
       <View style={styles.commentInputContainer}>
         <TextInput
           style={styles.commentInput}
           placeholder="Add a comment..."
-        // Yorum yapılınca yapılacak işlemleri buraya ekleyin
+          value={commentText}
+          onChangeText={setCommentText}
         />
-        <TouchableOpacity style={styles.commentButton}>
+        <TouchableOpacity onPress={handleCommentPost} style={styles.commentButton}>
           <Text style={styles.commentButtonText}>Post</Text>
         </TouchableOpacity>
+      </View>
+      <View style = {styles.ingrContainer}>
+        <Text style={styles.IngredientTitle}>Comments</Text>
+        {comments.map((comment:any, index:any) => (
+          <View key={index} style={styles.commentRow}>
+            <Image source={require('../assets/profilepic.jpg')} style={styles.profilePicture} />
+            <View style={{ marginLeft: 10 }}>
+              <Text style={styles.name}>User</Text>
+              <Text>{comment?.comment}</Text>
+            </View>
+          </View>
+        ))}
       </View>
     </ScrollView>
   );
@@ -179,7 +216,6 @@ const styles = StyleSheet.create({
     horizontalLine: {
       borderBottomColor: '#ccc',
       borderBottomWidth: 0.4,
-      marginVertical: 10,
     },
     backBtn: {
       position: 'absolute',
@@ -238,14 +274,18 @@ const styles = StyleSheet.create({
   },
   cookBox: {
     width: 100,
-    height: 100,
+    height: 70,
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginHorizontal: 20,
     marginVertical: 10,
     textAlign: 'center',
   },
-
+  commentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
   BoxTxt: {
     color: '#000',
     fontSize: 12,
@@ -262,7 +302,6 @@ const styles = StyleSheet.create({
   IngredientTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginHorizontal: 20,
     marginVertical: 10,
     color: '#303030',
   },
@@ -289,14 +328,12 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     textAlign: 'center',
-    marginHorizontal: 20,
     color: '#F5484A',
     fontWeight: 'bold',
     paddingVertical: 2,
   },
   commentContainer: {
     flexDirection: 'row',
-    marginHorizontal: 20,
     marginVertical: 10,
   },
   commentAvatar: {
