@@ -41,7 +41,6 @@ The Recipe Sharing App is a mobile application developed using React Native, CSS
 ![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 05_58_45](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/14c1d104-74bf-4c9b-9883-46e4807f44f9)
 ![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_05_35](https://github.com/kadersarikaya/Social-Recipe-Sharin![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_20_24](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/c15463ea-de13-4e08-a18b-80918240ec5a)
 g-App/assets/74090818/52b71998-ec64-4366-9aa8-fbfa7f8440ce)
-![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_06_52](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/85add80c-1a11-4cb6-8475-88ab6c131c22)
 g…]()![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_07_18](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/78b4ba08-35ac-47df-b913-0276f6d6f288)
 ![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_20_24](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/22f370c4-ca60-4dea-90e9-fde2754c224c)
 ![Androi![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_20_51](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/adefbe45-b8b3-4761-957e-8b5e496a0af0)
