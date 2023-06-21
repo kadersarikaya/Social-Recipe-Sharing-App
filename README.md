@@ -45,6 +45,8 @@ d Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 07_58_10 (1)](https://github.com
 ![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_22_31](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/e6447078-c6a6-4e5e-aa36-ba2aafb5dbb9)
 ![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_20_24](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/1b066b58-1cc4-4145-b696-c3cda89d17e7)
 ![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_23_10](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/88b70dc7-9025-46c6-88b7-5ddde6ac56b4)
+![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_20_51](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/2c0b8047-664f-497c-b366-f250b47b1d29)
+![Android Emulator - Pixel_6_Pro_API_30_5554 20 06 2023 06_20_51](https://github.com/kadersarikaya/Social-Recipe-Sharing-App/assets/74090818/f7623841-95fe-46bc-8870-81be094b9071)
 
 ## Contributing
 
